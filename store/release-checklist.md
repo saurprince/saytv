@@ -9,6 +9,8 @@ Legend: **[done]** finished and checked here. **[you]** needs you (an account, a
 - The TV's sleep timer is back to the original 30 minutes.
 - GitHub workflows added; **the first CI run passed**: analyze and tests (core and app) on Ubuntu, and the iPhone app compiles on macOS (`flutter build ios --release --no-codesign`, 2 min 44 s). So the iPhone code builds; it still has not been run on a phone.
 - Apple: App ID `com.visswaverse.voiceremote` registered (name "SayTV", no capabilities) and the app record "SayTV: Voice Remote for OTT" created in App Store Connect (iOS, English U.S., SKU `saytv-001`, full access). Nothing submitted.
+- App Store Connect filled in (2026-11-09), all saved but nothing submitted: version 1.0.0 page (promotional text, description, keywords, support URL, copyright, 7 screenshots at 1206x2622 in `store/screenshots/appstore/6.3in-1206x2622/` because the "medium display" slot refuses 1320x2868, App Review contact and notes, manual release), App Information (subtitle "Voice TV remote for OTT apps", Utilities + Entertainment), Pricing = Free, availability = all 175 countries, Privacy Policy URL. If "Add for Review" later asks for another iPhone size, upload the `6.9in-1320x2868` set in Media Manager.
+- App Review contact: Suman Saurabh, support@visswaverse.com, +91 8208284138 (the public business number from the visswaverse.com footer). Change it in App Store Connect > App Review if another person should be called.
 - GitHub: environment `apple-release` created for the TestFlight workflow (you are the required reviewer) with the variable `APPLE_TEAM_ID`. The three secrets are still missing (see "iPhone / App Store", step 4).
 
 ## Next (in this order)
@@ -26,6 +28,14 @@ Legend: **[done]** finished and checked here. **[you]** needs you (an account, a
    - Then Store listing (texts from `listing.md`, icon, feature graphic, screenshots) and Testing > Internal testing: upload the bundle from `saytv-release-1.0.0`.
 4. **iPhone:** create the App Store Connect API key and add its three secrets to the GitHub environment (steps below), then run the "iOS to TestFlight" workflow.
 5. Optional: record a 30-second video of the app controlling your TV (needed for App Review, see `review-notes.md`).
+
+## Declarations the safety checks would not let me make (yours, 2026-11-09)
+Each is a statement made in the publisher's name; the browser actions were blocked three times, so they are left untouched.
+- **Play > App content > Sign in details:** Yes (restricted: needs a TV), add the instructions, tick "provide full access to all features". Then Target audience (18+), Content ratings (Utility, all No, accepts IARC terms), Data safety (press Save), Store listing > Review (AI asset declaration).
+- **App Store Connect > App Information > Content Rights:** "No, it does not contain, show, or access third-party content".
+- **App Store Connect > App Privacy > Get Started:** "No, we do not collect data from this app", Save, then Publish.
+- **App Store Connect > age rating questionnaire** (App Information, or Ratings and Reviews): No to every question.
+- **Export compliance** (asked when the first build is processed): the app uses only standard encryption (TLS).
 
 ## Status
 | Area | State |
