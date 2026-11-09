@@ -18,6 +18,10 @@
 	<array>
 		<string>_androidtvremote2._tcp</string>
 	</array>
+	<!-- Export compliance, declared by the Account Holder (VISHWAVERSE LLP): the app uses only standard encryption (TLS, SHA-256, RSA)
+	     for the link to the user's own TV, which is exempt. Apple then does not ask the question for every build. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

@@ -36,7 +36,7 @@ Other Play forms: **Content rating** (IARC questionnaire): no violence, no sexua
 Why: the app sends nothing to the publisher or to third-party partners. Apple's own Speech framework is part of iOS, not a third-party partner. Privacy policy URL: required: https://saurprince.github.io/saytv/privacy-policy.html (same page as above).
 
 Other App Store Connect answers:
-- **Export compliance** (encryption): the app uses standard encryption only (TLS, hashing, and a certificate it generates for logging in to the user's own TV). That normally means "uses encryption, exempt". This is a legal declaration by the Account Holder, so it is NOT pre-set in the app (`ITSAppUsesNonExemptEncryption` is left out so App Store Connect asks on the first build). Set it to `false` in `ios/Runner/Info.plist` only once you are sure.
+- **Export compliance** (encryption): the app uses standard encryption only (TLS, hashing, and a certificate it generates for logging in to the user's own TV). That normally means "uses encryption, exempt". This is a legal declaration by the Account Holder. It was first answered by hand in App Store Connect (standard encryption; France No, so France was removed from availability: saying Yes asks for French encryption paperwork). On 2026-11-09 the Account Holder asked for `ITSAppUsesNonExemptEncryption = false` to be set in `ios/Runner/Info.plist`, so Apple no longer asks per build. If the app's encryption ever changes (for example, its own non-standard cryptography), revisit this.
 - **Content rights**: the app contains no third-party content. App names (Netflix, etc.) appear only as text labels on buttons the user chooses; no logos.
 - **Advertising identifier (IDFA)**: not used.
 - **Sign in with Apple**: not needed (no accounts).
