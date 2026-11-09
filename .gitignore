@@ -1,0 +1,21 @@
+# Credentials and anything tied to one TV. Never commit these.
+*.pem
+client/
+screens/
+*.keystore
+*.jks
+key.properties
+store-password.txt
+*.p8
+*.mobileprovision
+
+# Build output, logs, IDE files
+__pycache__/
+*.log
+build/
+.dart_tool/
+.idea/
+*.iml
+
+# Raw emulator captures (the finished store screenshots are kept)
+store/screenshots/raw/

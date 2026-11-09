@@ -1,0 +1,14 @@
+{
+  "_note": "Suggested apps the user can add with one tap in Edit apps. Only application ids that are well known on Android TV / Google TV belong here; anything else the user adds by hand with the package from the app's Play Store address. Entries already in the user's list (same package) are not offered again.",
+  "apps": [
+    {"id": "disneyplus",   "name": "Disney+",       "package": "com.disney.disneyplus",              "say": ["disney plus", "disney+", "disney"]},
+    {"id": "hulu",         "name": "Hulu",          "package": "com.hulu.livingroomplus",            "say": ["hulu"]},
+    {"id": "peacock",      "name": "Peacock",       "package": "com.peacocktv.peacockandroid",       "say": ["peacock"]},
+    {"id": "twitch",       "name": "Twitch",        "package": "tv.twitch.android.app",              "say": ["twitch"]},
+    {"id": "crunchyroll",  "name": "Crunchyroll",   "package": "com.crunchyroll.crunchyroid",        "say": ["crunchyroll", "crunchy roll"]},
+    {"id": "ytmusic",      "name": "YouTube Music", "package": "com.google.android.youtube.tvmusic", "say": ["youtube music", "you tube music"]},
+    {"id": "plex",         "name": "Plex",          "package": "com.plexapp.android",                "say": ["plex"]},
+    {"id": "kodi",         "name": "Kodi",          "package": "org.xbmc.kodi",                      "say": ["kodi"]},
+    {"id": "vlc",          "name": "VLC",           "package": "org.videolan.vlc",                   "say": ["vlc"]}
+  ]
+}

@@ -1,0 +1,16 @@
+name: tv_remote_core
+description: Talks to an Android TV over Wi-Fi (the Android TV Remote v2 protocol) and understands a fixed set of spoken phrases. Pure Dart, shared by the Android and iPhone apps.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  basic_utils: ^5.7.0
+  crypto: ^3.0.3
+  multicast_dns: ^0.3.2
+
+dev_dependencies:
+  lints: ^4.0.0
+  test: ^1.25.0

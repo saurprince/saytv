@@ -1,0 +1,16 @@
+{
+  "_note": "Apps the controller can open. 'package' is opened with market://launch?id=<package>, verified on the tested TV (2026-11-08). Only launchable apps belong here. The app lets the user add or remove entries.",
+  "apps": [
+    {"id": "netflix",      "name": "Netflix",      "package": "com.netflix.ninja",                  "say": ["netflix"]},
+    {"id": "prime",        "name": "Prime Video",  "package": "com.amazon.amazonvideo.livingroom",  "say": ["prime video", "prime", "amazon prime", "amazon"]},
+    {"id": "appletv",      "name": "Apple TV",     "package": "com.apple.atve.androidtv.appletv",   "say": ["apple tv", "apple"]},
+    {"id": "youtube",      "name": "YouTube",      "package": "com.google.android.youtube.tv",      "say": ["youtube", "you tube"]},
+    {"id": "hotstar",      "name": "JioHotstar",   "package": "in.startv.hotstar",                  "say": ["hotstar", "jio hotstar", "jiohotstar", "disney hotstar"]},
+    {"id": "sonyliv",      "name": "SonyLIV",      "package": "com.sonyliv",                        "say": ["sony liv", "sonyliv", "sony"]},
+    {"id": "zee5",         "name": "ZEE5",         "package": "com.graymatrix.did",                 "say": ["zee5", "zee 5", "zee five", "zee"]},
+    {"id": "jiotv",        "name": "JioTV",        "package": "com.jio.jioplay.tv",                 "say": ["jio tv", "jiotv"]},
+    {"id": "tvfplay",      "name": "TVF Play",     "package": "com.tvf.tvfplay.tv",                 "say": ["tvf play", "tvf"]},
+    {"id": "spotify",      "name": "Spotify",      "package": "com.spotify.tv.android",             "say": ["spotify"]},
+    {"id": "mxplayer",     "name": "MX Player",    "package": "com.mxtech.videoplayer.television",  "say": ["mx player", "mx"]}
+  ]
+}

@@ -1,0 +1,11 @@
+SayTV
+Copyright 2026 VISHWAVERSE LLP (publisher). Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The names "SayTV" and its icon are the publisher's, and are not licensed by the code licence.
+
+This project talks to Android TV / Google TV devices using the Android TV Remote protocol (version 2). The message layouts were
+taken from the open-source androidtvremote2 project by tronikos (Apache License 2.0): https://github.com/tronikos/androidtvremote2
+No code of that project is included.
+
+SayTV is an independent app. It is not affiliated with or endorsed by Google or by any TV or streaming brand.
+Names of apps and companies that appear in the app or in this repository are trademarks of their owners.
