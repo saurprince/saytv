@@ -107,7 +107,9 @@ class _RemoteScreenState extends State<RemoteScreen> {
             'An independent app: not affiliated with Google or with any TV or streaming brand. App names are trademarks of their owners.',
           ),
           SizedBox(height: 8),
-          Text('Support: $supportEmail'),
+          SelectableText('Support: $supportEmail'),
+          SizedBox(height: 4),
+          SelectableText('Privacy policy: $privacyPolicyUrl'),
         ],
       );
 
