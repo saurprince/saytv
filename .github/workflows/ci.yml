@@ -1,0 +1,54 @@
+name: CI
+
+# Checks on every push and pull request. No secrets are used here. Flutter is installed from its own repository (no third-party action),
+# so the only action this workflow trusts is GitHub's own actions/checkout.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: "3.47.9"
+
+jobs:
+  test:
+    name: Analyze and test (core and app)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Flutter
+        run: |
+          git clone --depth 1 --branch "$FLUTTER_VERSION" https://github.com/flutter/flutter.git "$HOME/flutter"
+          echo "$HOME/flutter/bin" >> "$GITHUB_PATH"
+      - name: Core (Dart)
+        working-directory: core
+        run: |
+          dart pub get
+          dart analyze
+          dart test
+      - name: App (Flutter)
+        working-directory: app
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+
+  ios-compile:
+    name: iPhone build compiles (no signing)
+    runs-on: macos-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Flutter
+        run: |
+          git clone --depth 1 --branch "$FLUTTER_VERSION" https://github.com/flutter/flutter.git "$HOME/flutter"
+          echo "$HOME/flutter/bin" >> "$GITHUB_PATH"
+      - name: Build for iPhone without signing
+        working-directory: app
+        run: |
+          flutter pub get
+          flutter build ios --release --no-codesign
