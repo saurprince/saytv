@@ -5,6 +5,7 @@ import 'package:tv_remote_core/tv_remote_core.dart';
 import 'apps_screen.dart';
 import 'branding.dart';
 import 'controller.dart';
+import 'layout.dart';
 import 'voice.dart';
 
 class RemoteScreen extends StatefulWidget {
@@ -171,7 +172,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
           ),
           body: SafeArea(
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+              padding: EdgeInsets.fromLTRB(sidePadding(context), 8, sidePadding(context), 32),
               children: [
                 _status(context),
                 const SizedBox(height: 12),

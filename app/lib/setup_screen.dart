@@ -6,6 +6,7 @@ import 'package:tv_remote_core/tv_remote_core.dart';
 
 import 'branding.dart';
 import 'controller.dart';
+import 'layout.dart';
 
 /// First run: find the TV (scan or typed address), then pair with the code the TV shows.
 class SetupScreen extends StatefulWidget {
@@ -123,7 +124,7 @@ class _SetupScreenState extends State<SetupScreen> {
       appBar: AppBar(title: const Text('Connect your TV')),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.symmetric(horizontal: sidePadding(context), vertical: 16),
           children: [
             if (_busy != null) ...[
               const SizedBox(height: 48),

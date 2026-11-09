@@ -3,7 +3,7 @@ description: "SayTV: a voice remote for OTT apps on Android TV and Google TV, ov
 publish_to: 'none'
 
 # The number after + is the build number and must go up with every upload to either store.
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.13.7

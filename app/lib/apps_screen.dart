@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tv_remote_core/tv_remote_core.dart';
 
 import 'controller.dart';
+import 'layout.dart';
 
 /// Lets the user choose which apps appear as buttons and answer to "open NAME": add suggested or own apps, rename, reorder, remove.
 class AppsScreen extends StatelessWidget {
@@ -81,7 +82,7 @@ class AppsScreen extends StatelessWidget {
           body: SafeArea(
             child: ReorderableListView.builder(
               buildDefaultDragHandles: false,
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 32),
+              padding: EdgeInsets.fromLTRB(sidePadding(context, min: 8), 0, sidePadding(context, min: 8), 32),
               header: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                 child: Text(
