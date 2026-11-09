@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tv_remote_core/tv_remote_core.dart';
@@ -51,7 +53,8 @@ class _SetupScreenState extends State<SetupScreen> {
       _found = results.values.toList();
       _searching = false;
       if (_found.isEmpty) {
-        _error = 'No TV found. Make sure the TV is on and on the same Wi-Fi, or type its address (TV Settings > Network).';
+        _error = 'No TV found. Make sure the TV is on and on the same Wi-Fi, or type its address (TV Settings > Network).'
+            '${Platform.isIOS ? ' On iPhone, also check Settings > SayTV > Local Network is on.' : ''}';
       }
     });
   }
@@ -175,7 +178,11 @@ class _SetupScreenState extends State<SetupScreen> {
                 Expanded(
                   child: TextField(
                     controller: _ip,
-                    keyboardType: TextInputType.number,
+                    // The decimal pad has a dot key on iPhone; the plain number pad does not. Some regions show a comma instead, so turn it into a dot.
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      TextInputFormatter.withFunction((o, n) => n.copyWith(text: n.text.replaceAll(',', '.'))),
+                    ],
                     decoration: const InputDecoration(hintText: '192.168.1.20', border: OutlineInputBorder()),
                     onSubmitted: (v) => v.trim().isEmpty ? null : _startPairing(v.trim()),
                   ),
