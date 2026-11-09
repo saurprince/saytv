@@ -8,7 +8,8 @@ import 'store.dart';
 
 /// [notRecognised]: the TV answers but closes the connection at once, as it does with a phone it no longer has paired.
 /// Seen on the test TV (ATV R2): it keeps only the most recently paired remote, so pairing a second phone drops the first.
-enum Link { idle, connecting, connected, unreachable, notRecognised }
+/// [identityChanged]: something answered at the TV's address with a different certificate than the TV showed at pairing.
+enum Link { idle, connecting, connected, unreachable, notRecognised, identityChanged }
 
 /// Owns the one connection to the TV: connects, reconnects, and turns taps and spoken phrases into commands.
 class TvController extends ChangeNotifier with WidgetsBindingObserver {
@@ -39,9 +40,12 @@ class TvController extends ChangeNotifier with WidgetsBindingObserver {
   bool _disposed = false;
   int _closedAtOnce = 0; // consecutive attempts where the TV closed the connection straight away
 
+  /// The fingerprint of the TV's certificate, saved at pairing. Every connection must present this certificate.
+  String? tvPin;
+
   /// How the app opens a connection. Replaced in tests.
-  Future<RemoteConnection> Function(String host, Identity identity) connector =
-      (host, identity) => RemoteConnection.connect(host, identity, clientName: appName);
+  Future<RemoteConnection> Function(String host, Identity identity, String? pin) connector =
+      (host, identity, pin) => RemoteConnection.connect(host, identity, clientName: appName, pin: pin);
 
   bool get paired => identity != null && host != null;
 
@@ -60,6 +64,7 @@ class TvController extends ChangeNotifier with WidgetsBindingObserver {
     identity = await _try(store.loadIdentity);
     host = await _try(store.loadHost);
     tvName = await _try(store.loadTvName);
+    tvPin = await _try(store.loadTvPin);
     apps = await _try(store.loadApps) ?? [];
     catalog = await _try(store.loadCatalog) ?? [];
     parser = PhraseParser(apps);
@@ -99,12 +104,14 @@ class TvController extends ChangeNotifier with WidgetsBindingObserver {
     await store.saveTvName(tvName);
   }
 
-  /// Called after a successful pairing.
-  Future<void> setPaired(Identity id, String tvHost) async {
+  /// Called after a successful pairing. [pin] is the TV's certificate fingerprint proven by the pairing code.
+  Future<void> setPaired(Identity id, String tvHost, {String? pin}) async {
     await store.saveIdentity(id);
     await store.saveHost(tvHost);
+    await store.saveTvPin(pin);
     identity = id;
     host = tvHost;
+    tvPin = pin;
     notifyListeners();
     unawaited(connect());
   }
@@ -115,6 +122,7 @@ class TvController extends ChangeNotifier with WidgetsBindingObserver {
     identity = null;
     host = null;
     tvName = null;
+    tvPin = null;
     link = Link.idle;
     _closedAtOnce = 0;
     notifyListeners();
@@ -128,12 +136,20 @@ class TvController extends ChangeNotifier with WidgetsBindingObserver {
     link = Link.connecting;
     notifyListeners();
     try {
-      final c = await connector(host!, identity!);
+      final c = await connector(host!, identity!, tvPin);
       _conn = c;
       tv = c.state;
       link = Link.connected;
       _attempt = 0;
       _closedAtOnce = 0;
+      if (tvPin == null && c.tvFingerprint != null) {
+        // A pairing made before pins existed: trust the TV that answers now and recognise it from here on.
+        tvPin = c.tvFingerprint;
+        unawaited(_try<String>(() async {
+          await store.saveTvPin(tvPin);
+          return tvPin;
+        }));
+      }
       _sub = c.states.listen((s) {
         tv = s;
         notifyListeners();
@@ -147,6 +163,9 @@ class TvController extends ChangeNotifier with WidgetsBindingObserver {
           _scheduleRetry();
         }
       }));
+    } on TvCertificateChanged {
+      // Not retried on its own: whatever answers is not the TV this phone paired with. The user decides (pair again, or leave it).
+      link = Link.identityChanged;
     } catch (e) {
       // A TV that is off or elsewhere gives a timeout or "connection refused". A TV that answers and then closes the connection
       // twice in a row no longer recognises this phone (it was probably paired with another phone).

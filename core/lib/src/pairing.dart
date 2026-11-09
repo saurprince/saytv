@@ -6,6 +6,8 @@ import 'identity.dart';
 import 'tv_socket.dart';
 import 'wire.dart';
 
+export 'tv_socket.dart' show TvCertificateChanged, certificateFingerprint;
+
 class PairingException implements Exception {
   PairingException(this.message);
   final String message;
@@ -61,8 +63,14 @@ class Pairing {
     }
     _socket.send(_outer(40, fBytes(1, digest)));
     await _expect(41, 'secret ack');
+    // The code just proved this certificate belongs to the TV that showed it: keep its fingerprint to recognise the TV later.
+    tvFingerprint = certificateFingerprint(serverDer);
     _socket.close();
   }
+
+  /// After a successful [finish]: the fingerprint (SHA-256, hex) of the TV's certificate, proven by the code. Save it and pass it
+  /// as `pin` to [RemoteConnection.connect].
+  String? tvFingerprint;
 
   void cancel() => _socket.close();
 

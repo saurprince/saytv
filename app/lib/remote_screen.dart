@@ -202,6 +202,10 @@ class _RemoteScreenState extends State<RemoteScreen> {
           scheme.error,
           'This phone is no longer paired with the TV. Another phone may have paired with it: a TV can remember only one remote at a time.'
         ),
+      Link.identityChanged => (
+          scheme.error,
+          'The TV\'s security certificate has changed. That happens after the TV is reset, but it could also mean something on your network is pretending to be the TV. Pair again only if you know the TV was reset.'
+        ),
       Link.idle => (Colors.grey, 'Not connected'),
     };
     return Row(children: [
@@ -209,7 +213,8 @@ class _RemoteScreenState extends State<RemoteScreen> {
       const SizedBox(width: 8),
       Expanded(child: Text(text)),
       if (c.link == Link.unreachable || c.link == Link.idle) TextButton(onPressed: c.connect, child: const Text('Retry')),
-      if (c.link == Link.notRecognised) TextButton(onPressed: c.forget, child: const Text('Pair again')),
+      if (c.link == Link.notRecognised || c.link == Link.identityChanged)
+        TextButton(onPressed: c.forget, child: const Text('Pair again')),
     ]);
   }
 

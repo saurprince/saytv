@@ -33,6 +33,10 @@ class _EmptyStore extends Store {
       ];
   @override
   Future<List<AppEntry>> loadCatalog() async => const [];
+  @override
+  Future<String?> loadTvPin() async => null;
+  @override
+  Future<void> forget() async {}
 }
 
 void main() {
@@ -66,19 +70,42 @@ void main() {
     c.identity = Identity(certPem: 'x', keyPem: 'y');
     c.host = '192.0.2.1';
 
-    c.connector = (h, i) async => throw StateError('the TV closed the connection');
+    c.connector = (h, i, p) async => throw StateError('the TV closed the connection');
     await c.connect();
     expect(c.link, Link.unreachable); // once could be a TV that is starting up
     await c.connect();
     expect(c.link, Link.notRecognised);
 
     // a timeout or refused connection (TV off, other network) is "not reachable", and resets the count
-    c.connector = (h, i) async => throw const SocketException('Connection refused');
+    c.connector = (h, i, p) async => throw const SocketException('Connection refused');
     await c.connect();
     expect(c.link, Link.unreachable);
-    c.connector = (h, i) async => throw StateError('the TV closed the connection');
+    c.connector = (h, i, p) async => throw StateError('the TV closed the connection');
     await c.connect();
     expect(c.link, Link.unreachable);
+    c.dispose();
+  });
+
+  test('every connection carries the TV certificate pin; a different certificate is reported, not retried', () async {
+    final c = TvController(_EmptyStore());
+    await c.init();
+    c.identity = Identity(certPem: 'x', keyPem: 'y');
+    c.host = '192.0.2.1';
+    c.tvPin = 'abc123'; // saved when pairing succeeded
+
+    String? pinUsed;
+    c.connector = (h, i, p) async {
+      pinUsed = p;
+      throw const TvCertificateChanged('abc123', 'ffff');
+    };
+    await c.connect();
+    expect(pinUsed, 'abc123');
+    expect(c.link, Link.identityChanged);
+
+    // "Pair again" forgets the TV and with it the pin
+    await c.forget();
+    expect(c.tvPin, isNull);
+    expect(c.link, Link.idle);
     c.dispose();
   });
 

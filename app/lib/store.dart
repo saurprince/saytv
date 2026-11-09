@@ -20,6 +20,19 @@ class Store {
 
   Future<void> saveHost(String host) async => (await SharedPreferences.getInstance()).setString('host', host);
 
+  /// The fingerprint of the TV's certificate, saved when pairing succeeded. Public information, so plain preferences are fine.
+  /// null for a pairing made before pins existed: the app then saves the TV's fingerprint on the next successful connection.
+  Future<String?> loadTvPin() async => (await SharedPreferences.getInstance()).getString('tvPin');
+
+  Future<void> saveTvPin(String? pin) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (pin == null) {
+      await prefs.remove('tvPin');
+    } else {
+      await prefs.setString('tvPin', pin);
+    }
+  }
+
   /// The name the user gave the TV ("Living room"); null if they did not.
   Future<String?> loadTvName() async => (await SharedPreferences.getInstance()).getString('tvName');
 
@@ -38,6 +51,7 @@ class Store {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('host');
     await prefs.remove('tvName');
+    await prefs.remove('tvPin');
   }
 
   // ---- apps ----

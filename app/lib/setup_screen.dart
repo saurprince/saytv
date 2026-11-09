@@ -91,7 +91,7 @@ class _SetupScreenState extends State<SetupScreen> {
     });
     try {
       await _pairing!.finish(_code.text);
-      await widget.controller.setPaired(_identity!, _host!);
+      await widget.controller.setPaired(_identity!, _host!, pin: _pairing!.tvFingerprint);
     } on PairingException catch (e) {
       if (!mounted) return;
       setState(() {

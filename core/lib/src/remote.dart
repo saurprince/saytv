@@ -61,14 +61,19 @@ class RemoteConnection {
   TvState _state = const TvState();
 
   TvState get state => _state;
+
+  /// The fingerprint (SHA-256, hex) of the certificate this TV presented.
+  String? get tvFingerprint => _socket.peerFingerprint;
   Stream<TvState> get states => _states.stream;
   bool get isClosed => _socket.isClosed;
   Future<void> get done => _socket.done;
 
   /// [clientName] is how this phone is named in the TV's own lists of remotes.
+  /// [pin] is the TV's certificate fingerprint saved at pairing ([Pairing.tvFingerprint]); a TV with another certificate is refused
+  /// with [TvCertificateChanged]. Without it the connection is accepted and [tvFingerprint] tells what to save.
   static Future<RemoteConnection> connect(String host, Identity identity,
-      {Duration timeout = const Duration(seconds: 15), String clientName = 'Voice remote'}) async {
-    final socket = await TvSocket.connect(host, port, identity);
+      {Duration timeout = const Duration(seconds: 15), String clientName = 'Voice remote', String? pin}) async {
+    final socket = await TvSocket.connect(host, port, identity, pin: pin);
     final c = RemoteConnection._(socket, clientName);
     try {
       await c._started.future.timeout(timeout);
