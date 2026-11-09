@@ -111,6 +111,53 @@ def compose(raw_path: Path, caption: str, size, out_path: Path, bleed: bool = Fa
     canvas.convert("RGB").save(out_path)  # 24-bit, no alpha: both stores want that
 
 
+# ---- iPad 13" (2064x2752), from real captures of the app on a tablet-size screen (raw-ipad/, 1536x2048) ----
+RAW_IPAD = ROOT / "store/screenshots/raw-ipad"
+IPAD_SIZE = (2064, 2752)
+IPAD_DIR = "appstore/ipad-13in-2064x2752"
+# (raw file, caption, crop box in the raw capture). The box drops the status bar at the top and the tablet's taskbar at the bottom;
+# the short screens (setup, code) are also cut after their content so they are not mostly empty.
+IPAD_SHOTS = [
+    ("ipad-03-remote.png", "A full remote, too", (0, 50, 1536, 1925)),
+    ("ipad-02-open-netflix.png", "Say it. Your TV does it.", (0, 50, 1536, 1925)),
+    ("ipad-05-apps.png", "Your apps, your order", (0, 50, 1536, 1925)),
+    ("ipad-06-suggestions.png", "Add any app on your TV", (0, 50, 1536, 1925)),
+    ("ipad-08-dark-apps.png", "Light and dark themes", (0, 50, 1536, 1925)),
+    # Not used: the setup and code screens are mostly empty on an iPad canvas (raw captures kept: ipad-01-setup, ipad-04-code-filled).
+]
+
+
+def compose_ipad(raw_path: Path, caption: str, box, out_path: Path):
+    """Caption on top, the real screen below it, centred, as large as fits (width 84% at most)."""
+    W, H = IPAD_SIZE
+    canvas = gradient(W, H).convert("RGBA")
+    d = ImageDraw.Draw(canvas)
+    font_px = int(W * 0.052)
+    font = ImageFont.truetype(str(FONTS / "roboto-bold.ttf"), font_px)
+    y = int(H * 0.05)
+    for ln in wrap(d, caption, font, W * 0.86):
+        d.text(((W - d.textlength(ln, font=font)) / 2, y), ln, font=font, fill=(255, 255, 255, 255))
+        y += int(font_px * 1.2)
+    top = y + int(H * 0.03)
+
+    shot = Image.open(raw_path).convert("RGB").crop(box)
+    scale = min(W * 0.84 / shot.width, (H - top - int(H * 0.05)) / shot.height)
+    tw, th = int(shot.width * scale), int(shot.height * scale)
+    shot = shot.resize((tw, th), Image.LANCZOS)
+
+    radius = int(W * 0.03)
+    mask = Image.new("L", (tw * 2, th * 2), 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, tw * 2 - 1, th * 2 - 1], radius=radius * 2, fill=255)
+    mask = mask.resize((tw, th), Image.LANCZOS)
+    x = (W - tw) // 2
+    shadow = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
+    ImageDraw.Draw(shadow).rounded_rectangle([x, top + 14, x + tw, top + th + 14], radius=radius, fill=(0, 0, 0, 110))
+    canvas.alpha_composite(shadow.filter(ImageFilter.GaussianBlur(int(W * 0.012))))
+    canvas.paste(shot, (x, top), mask)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    canvas.convert("RGB").save(out_path)
+
+
 if __name__ == "__main__":
     n = 0
     for sub, size in TARGETS.items():
@@ -119,3 +166,9 @@ if __name__ == "__main__":
                     bleed=sub.startswith("appstore"))
             n += 1
     print(n, "screenshots written under", OUT)
+    m = 0
+    for raw, caption, box in IPAD_SHOTS:
+        if (RAW_IPAD / raw).exists():  # the connected-remote captures are added once the emulator is paired
+            m += 1
+            compose_ipad(RAW_IPAD / raw, caption, box, OUT / IPAD_DIR / f"{m:02d}-{Path(raw).stem.split('-', 1)[1]}.png")
+    print(m, "iPad screenshots written under", OUT / IPAD_DIR)
