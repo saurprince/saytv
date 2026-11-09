@@ -11,7 +11,14 @@ Legend: **[done]** finished and checked here. **[you]** needs you (an account, a
 ## Next (in this order)
 1. **Back up** `Documents/Nokia TV/saytv-signing/` to two places off this PC.
 2. **Add the two workflow files to GitHub** (they are waiting in `Documents/Nokia TV/saytv-workflows-pending/`). GitHub refuses workflow files from a token without the `workflow` scope. In a terminal run `gh auth refresh -h github.com -s workflow` and approve the code in the browser; then copy the two files into `.github/workflows/`, commit and push. That also starts the first iPhone compile check.
-3. **Google Play:** the Create app form is open and filled in for the publisher account (name "SayTV: Voice Remote for OTT", package `com.visswaverse.voiceremote` shown as available, App, Free). **Tick the two declarations** (Developer Program Policies; US export laws, which mentions encryption: the app uses TLS to the TV and nothing else) and press Create app. Then say go and I continue with the app content, listing and the internal-testing upload.
+3. **Google Play** (publisher account, https://play.google.com/console/u/5/developers, app "SayTV: Voice Remote for OTT", draft). Created by you on 2026-11-09. Done in App content: privacy policy URL, Ads = No, Government apps = No. **Still to do, each a declaration in your name** (the console's safety check stopped me from ticking them for you):
+   - Sign in details: answer Yes (restricted: it needs a TV to pair, "actions on another device") and add the instructions below; the console insists on the box "sign-in details provide full access to all the features", which is true only for a reviewer who has a TV. Target audience cannot start before this is saved.
+     Instructions text (375 of 500 characters): *No account or sign-in. The remote works only with a real TV that runs Android TV or Google TV on the same Wi-Fi as the phone. To pair: enter the TV's IP address (TV Settings > Network) or tap Search my network, tap Connect, then type the 6-character code the TV shows. Without a TV, only the setup screen and its error messages can be seen. Questions: support@visswaverse.com*
+   - Content ratings (completing it accepts IARC's terms): category Utility; answer No to every question.
+   - Target audience: 18 and over; not for children; no ads.
+   - Data safety: see `data-safety-and-privacy-labels.md` (audio is declared cautiously; nothing collected by us, nothing shared).
+   - Advertising ID = No, Financial features = "My app doesn't provide any financial features", Health apps = none.
+   - Then Store listing (texts from `listing.md`, icon, feature graphic, screenshots) and Testing > Internal testing: upload the bundle from `saytv-release-1.0.0`.
 4. **iPhone:** register the app id, create the App Store Connect app and an API key (steps below), then run the iOS workflow.
 5. Optional: record a 30-second video of the app controlling your TV (needed for App Review, see `review-notes.md`).
 
