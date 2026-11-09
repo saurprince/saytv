@@ -36,7 +36,8 @@ jobs:
         working-directory: app
         run: |
           flutter pub get
-          flutter build ios --config-only --release --build-number="$GITHUB_RUN_NUMBER"
+          # --no-codesign: this step only generates the Flutter config; the Archive step below signs with the API key.
+          flutter build ios --config-only --no-codesign --release --build-number="$GITHUB_RUN_NUMBER"
       - name: Write the API key (removed again at the end)
         env:
           ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}

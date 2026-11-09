@@ -21,6 +21,8 @@ These follow what the app actually does (see `docs/privacy-policy.html`). Check 
 | Independent security review | No | |
 | Any other data type (location, personal info, identifiers, app activity, diagnostics...) | No | |
 
+Result on the live form (saved 2026-11-09): because the voice data is declared "processed ephemerally", Google leaves it off the public listing, so the Preview and the Play page show "No data collection declared" and "No data shared with third parties". The voice entry stays in the form. To show "Audio: voice or sound recordings, collected" on the listing instead, answer "No" to ephemeral processing.
+
 Note: if you prefer the narrower reading ("the app collects nothing; the OS speech service is outside the app"), choose "No data collected". The policy text is accurate either way. If Google asks for a change after review, switch to the declaration above.
 
 Other Play forms: **Content rating** (IARC questionnaire): no violence, no sexual content, no profanity, no controlled substances, no user interaction or sharing, no location sharing, no purchases. Expected rating: Everyone / 3+. **Ads**: no. **Government app**: no. **Financial features**: none. **Health features**: none. **News app**: no. **Data deletion**: not required (no accounts). **Advertising ID**: not used (declare "No"). Target API level: see `release-checklist.md`.
