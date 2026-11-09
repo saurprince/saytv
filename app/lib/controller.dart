@@ -6,7 +6,9 @@ import 'package:tv_remote_core/tv_remote_core.dart';
 import 'branding.dart';
 import 'store.dart';
 
-enum Link { idle, connecting, connected, unreachable }
+/// [notRecognised]: the TV answers but closes the connection at once, as it does with a phone it no longer has paired.
+/// Seen on the test TV (ATV R2): it keeps only the most recently paired remote, so pairing a second phone drops the first.
+enum Link { idle, connecting, connected, unreachable, notRecognised }
 
 /// Owns the one connection to the TV: connects, reconnects, and turns taps and spoken phrases into commands.
 class TvController extends ChangeNotifier with WidgetsBindingObserver {
@@ -35,6 +37,11 @@ class TvController extends ChangeNotifier with WidgetsBindingObserver {
   int _attempt = 0;
   bool _connecting = false;
   bool _disposed = false;
+  int _closedAtOnce = 0; // consecutive attempts where the TV closed the connection straight away
+
+  /// How the app opens a connection. Replaced in tests.
+  Future<RemoteConnection> Function(String host, Identity identity) connector =
+      (host, identity) => RemoteConnection.connect(host, identity, clientName: appName);
 
   bool get paired => identity != null && host != null;
 
@@ -109,6 +116,7 @@ class TvController extends ChangeNotifier with WidgetsBindingObserver {
     host = null;
     tvName = null;
     link = Link.idle;
+    _closedAtOnce = 0;
     notifyListeners();
   }
 
@@ -120,11 +128,12 @@ class TvController extends ChangeNotifier with WidgetsBindingObserver {
     link = Link.connecting;
     notifyListeners();
     try {
-      final c = await RemoteConnection.connect(host!, identity!, clientName: appName);
+      final c = await connector(host!, identity!);
       _conn = c;
       tv = c.state;
       link = Link.connected;
       _attempt = 0;
+      _closedAtOnce = 0;
       _sub = c.states.listen((s) {
         tv = s;
         notifyListeners();
@@ -138,8 +147,11 @@ class TvController extends ChangeNotifier with WidgetsBindingObserver {
           _scheduleRetry();
         }
       }));
-    } catch (_) {
-      link = Link.unreachable;
+    } catch (e) {
+      // A TV that is off or elsewhere gives a timeout or "connection refused". A TV that answers and then closes the connection
+      // twice in a row no longer recognises this phone (it was probably paired with another phone).
+      _closedAtOnce = e.toString().contains('closed the connection') ? _closedAtOnce + 1 : 0;
+      link = _closedAtOnce >= 2 ? Link.notRecognised : Link.unreachable;
       _scheduleRetry();
     } finally {
       _connecting = false;

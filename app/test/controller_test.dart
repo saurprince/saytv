@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tv_remote_core/tv_remote_core.dart';
 import 'package:tv_voice_remote/controller.dart';
@@ -54,6 +56,29 @@ void main() {
     expect(c.paired, isFalse);
     expect(c.apps.map((a) => a.id), ['netflix']);
     expect(c.parser.parse('open netflix'), isA<OpenApp>());
+    c.dispose();
+  });
+
+  test('a TV that keeps closing the connection is reported as "no longer paired"; an unreachable TV is not', () async {
+    // Seen on the test TV: pairing a second phone drops the first, whose connections the TV then closes at once.
+    final c = TvController(_EmptyStore());
+    await c.init();
+    c.identity = Identity(certPem: 'x', keyPem: 'y');
+    c.host = '192.0.2.1';
+
+    c.connector = (h, i) async => throw StateError('the TV closed the connection');
+    await c.connect();
+    expect(c.link, Link.unreachable); // once could be a TV that is starting up
+    await c.connect();
+    expect(c.link, Link.notRecognised);
+
+    // a timeout or refused connection (TV off, other network) is "not reachable", and resets the count
+    c.connector = (h, i) async => throw const SocketException('Connection refused');
+    await c.connect();
+    expect(c.link, Link.unreachable);
+    c.connector = (h, i) async => throw StateError('the TV closed the connection');
+    await c.connect();
+    expect(c.link, Link.unreachable);
     c.dispose();
   });
 

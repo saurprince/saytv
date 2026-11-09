@@ -1,3 +1,4 @@
 .dart_tool/
 .identity/
+.id-*/
 pubspec.lock

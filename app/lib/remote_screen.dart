@@ -198,6 +198,10 @@ class _RemoteScreenState extends State<RemoteScreen> {
       Link.connected => (Colors.green, 'Connected to ${c.displayName}'),
       Link.connecting => (Colors.orange, 'Connecting...'),
       Link.unreachable => (scheme.error, 'The TV is not reachable. It may be off: switch it on with its own remote.'),
+      Link.notRecognised => (
+          scheme.error,
+          'This phone is no longer paired with the TV. Another phone may have paired with it: a TV can remember only one remote at a time.'
+        ),
       Link.idle => (Colors.grey, 'Not connected'),
     };
     return Row(children: [
@@ -205,6 +209,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
       const SizedBox(width: 8),
       Expanded(child: Text(text)),
       if (c.link == Link.unreachable || c.link == Link.idle) TextButton(onPressed: c.connect, child: const Text('Retry')),
+      if (c.link == Link.notRecognised) TextButton(onPressed: c.forget, child: const Text('Pair again')),
     ]);
   }
 
