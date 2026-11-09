@@ -7,10 +7,13 @@ Legend: **[done]** finished and checked here. **[you]** needs you (an account, a
 - GitHub Pages (from `docs/`): privacy policy https://saurprince.github.io/saytv/privacy-policy.html and support page https://saurprince.github.io/saytv/ (both answer 200).
 - Apple Developer Program License Agreement accepted by the Account Holder.
 - The TV's sleep timer is back to the original 30 minutes.
+- GitHub workflows added; **the first CI run passed**: analyze and tests (core and app) on Ubuntu, and the iPhone app compiles on macOS (`flutter build ios --release --no-codesign`, 2 min 44 s). So the iPhone code builds; it still has not been run on a phone.
+- Apple: App ID `com.visswaverse.voiceremote` registered (name "SayTV", no capabilities) and the app record "SayTV: Voice Remote for OTT" created in App Store Connect (iOS, English U.S., SKU `saytv-001`, full access). Nothing submitted.
+- GitHub: environment `apple-release` created for the TestFlight workflow (you are the required reviewer) with the variable `APPLE_TEAM_ID`. The three secrets are still missing (see "iPhone / App Store", step 4).
 
 ## Next (in this order)
 1. **Back up** `Documents/Nokia TV/saytv-signing/` to two places off this PC.
-2. **Add the two workflow files to GitHub** (they are waiting in `Documents/Nokia TV/saytv-workflows-pending/`). GitHub refuses workflow files from a token without the `workflow` scope. In a terminal run `gh auth refresh -h github.com -s workflow` and approve the code in the browser; then copy the two files into `.github/workflows/`, commit and push. That also starts the first iPhone compile check.
+2. ~~Add the workflow files to GitHub~~ done (needed the `workflow` scope on the login, which you granted).
 3. **Google Play** (publisher account, https://play.google.com/console/u/5/developers, app "SayTV: Voice Remote for OTT", draft). Created by you on 2026-11-09. **Done in the console (2026-11-09):** privacy policy URL, Ads = No, Government apps = No, Financial features = none, Health apps = none, Advertising ID = No, Data safety answered (audio collected, ephemeral, optional, not shared; saved as a draft, final save needs Target audience first), default store listing (texts, icon, feature graphic, 7 phone screenshots; saved as a draft). **Still to do** (the console's safety check stopped me from the first two, the rest are yours or need a file I cannot attach):
    - Store listing > Review: choose the "AI asset declaration" (the icon, graphics and screenshots were drawn by Python scripts written by an AI, not by an image generator: "Don't label" is defensible, "Label" is the cautious choice), then Save. The screenshots uploaded in a different order than 01..07: drag "Say it. Your TV does it." to the front if you like.
    - Internal testing > Create new release: drag `Documents/Nokia TV/saytv-release-1.0.0/SayTV-1.0.0-release.aab` onto the upload box (55 MB: too big for my browser upload tool, 10 MB limit), accept Play App Signing if asked, name the release "1.0.0", release notes "First release.", Next, Save; add your email under Testers; Start rollout to internal testing.
@@ -21,7 +24,7 @@ Legend: **[done]** finished and checked here. **[you]** needs you (an account, a
    - Data safety: see `data-safety-and-privacy-labels.md` (audio is declared cautiously; nothing collected by us, nothing shared).
    - Advertising ID = No, Financial features = "My app doesn't provide any financial features", Health apps = none.
    - Then Store listing (texts from `listing.md`, icon, feature graphic, screenshots) and Testing > Internal testing: upload the bundle from `saytv-release-1.0.0`.
-4. **iPhone:** register the app id, create the App Store Connect app and an API key (steps below), then run the iOS workflow.
+4. **iPhone:** create the App Store Connect API key and add its three secrets to the GitHub environment (steps below), then run the "iOS to TestFlight" workflow.
 5. Optional: record a 30-second video of the app controlling your TV (needed for App Review, see `review-notes.md`).
 
 ## Status
@@ -32,7 +35,7 @@ Legend: **[done]** finished and checked here. **[you]** needs you (an account, a
 | Android release build, signed with the upload key | [done] see "Build outputs" |
 | Android screenshots | [done] `store/screenshots/play/` |
 | App Store screenshots | [done] captioned, from the same captures (`store/screenshots/appstore/`); real iPhone captures can replace them later |
-| iPhone build and TestFlight | workflows written, **never run**: the code is on GitHub, but the workflow files still have to be added (see "Next", step 2) and TestFlight also needs the Apple steps below. The iPhone app has not been compiled or run anywhere yet |
+| iPhone build and TestFlight | the iPhone app **compiles** on GitHub's macOS runner (no signing). The TestFlight workflow has never run: it needs the API-key secrets (step 4 under "iPhone / App Store"). The app has not been run on an iPhone yet |
 | Real-phone testing (speech, "Search my network") | [you] first on your iPhone through TestFlight |
 
 ## Decisions that are yours
@@ -55,9 +58,9 @@ Legend: **[done]** finished and checked here. **[you]** needs you (an account, a
 
 ## iPhone / App Store
 1. **[done] Account Holder accepted the updated Apple Developer Program License Agreement.**
-2. **[say go]** developer.apple.com > Identifiers: register `com.visswaverse.voiceremote` (no special capabilities needed).
-3. **[say go]** App Store Connect > Apps > New App: iOS, name, English, that bundle id, SKU `saytv-001`.
-4. **[you]** App Store Connect > Users and Access > Integrations > API: create a key with the App Manager role (download the `.p8` once). Put its Key ID, Issuer ID and the `.p8` contents (base64) into the GitHub environment as described at the top of `.github/workflows/ios-testflight.yml`. Do not paste them into a chat.
+2. **[done]** App ID `com.visswaverse.voiceremote` registered.
+3. **[done]** App Store Connect app record created (iOS, "SayTV: Voice Remote for OTT", English U.S., SKU `saytv-001`).
+4. **[you]** App Store Connect > Users and Access > Integrations > App Store Connect API > create a key with the App Manager role (download the `.p8` once). In GitHub > saurprince/saytv > Settings > Environments > apple-release, add three secrets: `ASC_KEY_ID` (the Key ID), `ASC_ISSUER_ID` (the Issuer ID, shown above the keys list) and `ASC_KEY_P8` (the `.p8` file contents, base64: in PowerShell `[Convert]::ToBase64String([IO.File]::ReadAllBytes("AuthKey_XXXX.p8")) | Set-Clipboard`). `APPLE_TEAM_ID` is already set. Do not paste any of these into a chat.
 5. **[you]** Run the "iOS to TestFlight" workflow (Actions tab, Run workflow). The first run is likely to need fixes: it has never run.
 6. **[you]** TestFlight: add yourself as an internal tester, install on your iPhone, and try pairing, the Local Network prompt, the microphone and speech recognition, and leaving and returning to the app.
 7. **[say go]** Fill the listing from `listing.md`, upload `store/screenshots/appstore/`, answer the privacy and export questions, attach the demo video, select the build and submit.
