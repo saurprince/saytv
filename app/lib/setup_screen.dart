@@ -48,12 +48,15 @@ class _SetupScreenState extends State<SetupScreen> {
     for (final tv in await scanSubnet()) {
       results.putIfAbsent(tv.host, () => tv);
     }
+    final searched = (await localPrefixes()).map((p) => '$p.*').join(', ');
     if (!mounted) return;
     setState(() {
       _found = results.values.toList();
       _searching = false;
       if (_found.isEmpty) {
-        _error = 'No TV found. Make sure the TV is on and on the same Wi-Fi, or type its address (TV Settings > Network).'
+        _error = 'No TV found'
+            '${searched.isEmpty ? ' (this phone has no Wi-Fi address: is Wi-Fi on?)' : ' (looked at $searched)'}. '
+            'Make sure the TV is on and on the same Wi-Fi, or type its address (TV Settings > Network).'
             '${Platform.isIOS ? ' On iPhone, also check Settings > SayTV > Local Network is on.' : ''}';
       }
     });
