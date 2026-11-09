@@ -27,7 +27,7 @@ Legend: **[done]** finished and checked here. **[you]** needs you (an account, a
    - Advertising ID = No, Financial features = "My app doesn't provide any financial features", Health apps = none.
    - Then Store listing (texts from `listing.md`, icon, feature graphic, screenshots) and Testing > Internal testing: upload the bundle from `saytv-release-1.0.0`.
 4. **iPhone:** create the App Store Connect API key and add its three secrets to the GitHub environment (steps below), then run the "iOS to TestFlight" workflow.
-5. Optional: record a 30-second video of the app controlling your TV (needed for App Review, see `review-notes.md`).
+5. ~~Demo video~~ recorded 2026-11-09: `Documents/Nokia TV/saytv-demo-video/SayTV-demo.mp4` (about 2 minutes, 1080x1920, the release app in an emulator pairing with the real TV, volume, mute, "open netflix", Home, D-pad, volume restored). Not in the repository on purpose (the TV's local address is typed on screen). Watch it once before using it. Attach it in App Store Connect > App Review > Attachment; the review notes already say a recording is available on request.
 
 ## Declarations the safety checks would not let me make (yours, 2026-11-09)
 Each is a statement made in the publisher's name; the browser actions were blocked three times, so they are left untouched.
