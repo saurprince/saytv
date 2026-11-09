@@ -2,14 +2,17 @@
 
 Legend: **[done]** finished and checked here. **[you]** needs you (an account, a legal declaration, a device). **[say go]** I can do it in the signed-in browser once you say go; I will not create records, accept terms, upload or submit without that.
 
-## First thing tomorrow (about 15 minutes of yours)
+## Done on 2026-11-09
+- Public repository https://github.com/saurprince/saytv (Apache-2.0), one clean commit, no personal paths or keys in it.
+- GitHub Pages (from `docs/`): privacy policy https://saurprince.github.io/saytv/privacy-policy.html and support page https://saurprince.github.io/saytv/ (both answer 200).
+- Apple Developer Program License Agreement accepted by the Account Holder.
+- The TV's sleep timer is back to the original 30 minutes.
+
+## Next (in this order)
 1. **Back up** `Documents/Nokia TV/saytv-signing/` to two places off this PC.
-2. **Apple Account Holder: accept the updated Developer Program License Agreement** in App Store Connect (nothing for iPhone can move before this).
-3. **Decide public or private** for the code (recommendation: public, Apache-2.0; the licence files are already in the project). The project is committed locally
-   (one commit, no remote). Putting it on GitHub was refused by this session's safety check, so it is not uploaded. To upload it privately, run in the project folder:
-   `gh repo create saurprince/saytv --private --source . --remote origin --push`
-   Pushing starts the CI: the first time the iPhone app is compiled anywhere (it may need fixes). To make it public later: `gh repo edit saurprince/saytv --visibility public --accept-visibility-change-consequences`.
-4. **Tell me "go"** for the Play Console and App Store Connect steps marked [say go] below. I will stop at each legal declaration for you to tick.
+2. **Add the two workflow files to GitHub** (they are waiting in `Documents/Nokia TV/saytv-workflows-pending/`). GitHub refuses workflow files from a token without the `workflow` scope. In a terminal run `gh auth refresh -h github.com -s workflow` and approve the code in the browser; then copy the two files into `.github/workflows/`, commit and push. That also starts the first iPhone compile check.
+3. **Google Play:** the Create app form is open and filled in for the publisher account (name "SayTV: Voice Remote for OTT", package `com.visswaverse.voiceremote` shown as available, App, Free). **Tick the two declarations** (Developer Program Policies; US export laws, which mentions encryption: the app uses TLS to the TV and nothing else) and press Create app. Then say go and I continue with the app content, listing and the internal-testing upload.
+4. **iPhone:** register the app id, create the App Store Connect app and an API key (steps below), then run the iOS workflow.
 5. Optional: record a 30-second video of the app controlling your TV (needed for App Review, see `review-notes.md`).
 
 ## Status
@@ -20,7 +23,7 @@ Legend: **[done]** finished and checked here. **[you]** needs you (an account, a
 | Android release build, signed with the upload key | [done] see "Build outputs" |
 | Android screenshots | [done] `store/screenshots/play/` |
 | App Store screenshots | [done] captioned, from the same captures (`store/screenshots/appstore/`); real iPhone captures can replace them later |
-| iPhone build and TestFlight | workflows written, **never run**: the code is not on GitHub yet (see "First thing tomorrow") and TestFlight also needs the Apple steps below. The iPhone app has not been compiled or run anywhere yet |
+| iPhone build and TestFlight | workflows written, **never run**: the code is on GitHub, but the workflow files still have to be added (see "Next", step 2) and TestFlight also needs the Apple steps below. The iPhone app has not been compiled or run anywhere yet |
 | Real-phone testing (speech, "Search my network") | [you] first on your iPhone through TestFlight |
 
 ## Decisions that are yours
@@ -42,7 +45,7 @@ Legend: **[done]** finished and checked here. **[you]** needs you (an account, a
 8. Every later upload needs a higher build number (`version: 1.0.0+N` in `app/pubspec.yaml`).
 
 ## iPhone / App Store
-1. **[you] Account Holder: accept the updated Apple Developer Program License Agreement** (App Store Connect shows the banner; new apps cannot be submitted until it is accepted).
+1. **[done] Account Holder accepted the updated Apple Developer Program License Agreement.**
 2. **[say go]** developer.apple.com > Identifiers: register `com.visswaverse.voiceremote` (no special capabilities needed).
 3. **[say go]** App Store Connect > Apps > New App: iOS, name, English, that bundle id, SKU `saytv-001`.
 4. **[you]** App Store Connect > Users and Access > Integrations > API: create a key with the App Manager role (download the `.p8` once). Put its Key ID, Issuer ID and the `.p8` contents (base64) into the GitHub environment as described at the top of `.github/workflows/ios-testflight.yml`. Do not paste them into a chat.
@@ -50,18 +53,16 @@ Legend: **[done]** finished and checked here. **[you]** needs you (an account, a
 6. **[you]** TestFlight: add yourself as an internal tester, install on your iPhone, and try pairing, the Local Network prompt, the microphone and speech recognition, and leaving and returning to the app.
 7. **[say go]** Fill the listing from `listing.md`, upload `store/screenshots/appstore/`, answer the privacy and export questions, attach the demo video, select the build and submit.
 
-## Repository (decision)
-- **Recommendation: public, Apache-2.0, in a new repository separate from the TV-fixes one.** Reasons: the app uses the microphone, the local network and a pairing key, so readable code builds trust; GitHub's macOS build minutes (needed for iPhone builds) are free for public repositories but limited on private ones; nothing in it is proprietary. The reference protocol project (androidtvremote2) is Apache-2.0 too.
-- Keep the **name and icon** as the publisher's trademarks (say so in the README); the code licence does not grant those.
+## Repository (decided: public)
+- Public, Apache-2.0, https://github.com/saurprince/saytv, separate from the TV-fixes repository. The app uses the microphone, the local network and a pairing key, so readable code builds trust, and GitHub's macOS build minutes (needed for iPhone builds) are free for public repositories.
+- The **name and icon** stay the publisher's; the code licence does not grant them (`NOTICE`).
 - Secrets never go in the repository: signing keys live outside the project; Apple keys live in a GitHub environment that needs your approval to use. The iOS workflow runs only when you start it.
-- **Before it goes public** (I will do this and show you the result): scrub `NOTES.md` and `pc-client/` of anything tied to your TV (model and device names, addresses, hardware ids, Wi-Fi names), check no key or certificate file is present, add `LICENSE` and a README note.
-- Choose the owner (your personal GitHub account, like the TV-fixes repository, or an organization) and the copyright holder in the LICENSE (you or VISHWAVERSE LLP).
+- Scrubbed before publishing: no keys or certificates, no TV address or hardware ids, no personal paths (the history was squashed to one commit first).
+- The copyright holder in `LICENSE` / `NOTICE` and in the listing is VISHWAVERSE LLP: change it there if you prefer your own name.
 
-## Privacy policy page
-The stores need a public URL. Your website was not changed. Options:
-- **A. A page on visswaverse.com** that you add yourself (paste the body of `store/privacy-policy.html`): for example `https://visswaverse.com/saytv-privacy`. Best for trust: same company domain.
-- **B. GitHub Pages** from a public repository: `https://<owner>.github.io/<repo>/privacy-policy.html`. No change to your website.
-- Either way, put the final URL into: both store consoles, `review-notes.md`, and (optionally) the About screen.
+## Privacy policy page (done)
+- Hosted with GitHub Pages from `docs/`: https://saurprince.github.io/saytv/privacy-policy.html. The support page is https://saurprince.github.io/saytv/.
+- Put these URLs into both store consoles. If you later move the policy to visswaverse.com, update the URL in both consoles, `listing.md`, `review-notes.md` and `data-safety-and-privacy-labels.md`.
 
 ## Build outputs
 - Folder: `Documents/Nokia TV/saytv-release-1.0.0/` holds `SayTV-1.0.0-release.aab` (upload this to Play), `SayTV-1.0.0-release.apk` (to try on a device or emulator) and `SHA256.txt`. Both were signed with the upload key and passed `scripts/verify-release.ps1` (assets present, package, version, target SDK 36, 16 KB alignment, upload-key signature).
